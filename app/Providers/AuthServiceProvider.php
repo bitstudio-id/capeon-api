@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Model\User;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -44,13 +44,17 @@ class AuthServiceProvider extends ServiceProvider
                 try {
                     $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
                 } catch(Exception $e) {
-                    throw new Exception("invalid token provided");
+                    throw new Exception("invalid_token_provided");
                 }
 
                 $sub = $credentials->sub;
 
                 // $u = db()->table("m_user")->where("user_id", $sub->id)->first();
                 $u = User::find($sub->id);
+
+                if($u == null) {
+                    throw new Exception("invalid_token_on_provider");
+                }
 
                 return $u;
             }

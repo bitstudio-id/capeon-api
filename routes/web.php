@@ -27,7 +27,28 @@ $router->get('/', function () use ($router) {
 });
 
 $api->version('v1', function ($api) {
-	$api->post('auth/token', 'App\Http\Controllers\AuthController@token');
-	$api->post('auth/register', 'App\Http\Controllers\AuthController@register');
-	$api->post('auth/register-confirm', 'App\Http\Controllers\AuthController@registerConfirm');
+	$api->group([
+		'namespace' => 'App\Http\Controllers' ,
+		'prefix' => 'test',
+	], function($api){
+		$api->group([
+			'middleware' => [
+				"auth"
+			],
+		], function($api){
+			$api->get('auth', 'TestController@auth');
+		});
+
+	});
+});
+
+$api->version('v1', function ($api) {
+	$api->group([
+		'namespace' => 'App\Http\Controllers' ,
+		'prefix' => 'auth',
+	], function($api){
+		$api->post('token', 'AuthController@token');
+		$api->post('register', ' AuthController@register');
+		$api->post('register-confirm', 'AuthController@registerConfirm');
+	});
 });

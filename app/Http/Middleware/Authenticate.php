@@ -4,16 +4,18 @@
  * Date: 12/03/2019
  * Time: 1:15
  */
-namespace Middleware;
+namespace App\Http\Middleware;
 
+use App\Exceptions\BadRequestException;
+use App\Exceptions\UnAuthorizedException;
+use App\Models\AppKey;
+use App\Models\Token;
 use Closure;
 use Exception;
-use Firebase\JWT\JWT;
 use Firebase\JWT\ExpiredException;
-use Model\Token;
+use Firebase\JWT\JWT;
 
-class Authenticate
-{
+class Authenticate {
     protected $auth;
 
     public function handle($request, Closure $next, $guard = null)
@@ -23,7 +25,7 @@ class Authenticate
         $bearer =  'Bearer';
 
         if(!$token) {
-            return failed("token not provided", 401, $request);
+            throw new BadRequestException("token_not_provided");
         }
 
         $tokenExplode = explode(" ", $token);
@@ -32,9 +34,9 @@ class Authenticate
         try {
             $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
         } catch(ExpiredException $e) {
-            return failed("token expired",401, $request);
+            throw new UnAuthorizedException("token_expired");
         } catch(Exception $e) {
-            return failed("invalid token",401, $request);
+            throw new UnAuthorizedException("invalid_token");
         }
 
         // cek apakah token di blok atau tidak
@@ -45,11 +47,18 @@ class Authenticate
             ->first();
 
         if($tokenCheck == null) {
-            return failed("token not allowed",401, $request);
+            throw new UnAuthorizedException("token_not_allowed");
         }
 
-        if($request->header(X_APP_ID) != $tokenCheck->token_app_uuid) {
-            return failed("missmatch token and app id",401, $request);
+        $app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
+                            ->first();
+
+        if($app_key == null) {
+            throw new BadRequestException("app_key_not_provided");
+        }
+
+        if($app_key->app_key_id != $tokenCheck->token_app_key_id) {
+            throw new UnAuthorizedException("missmatch_token_and_app_id");
         }
 
         return $next($request);

@@ -22,7 +22,7 @@ class AuthController extends Controller {
         $payload = [
             'iss' => env('JWT_ISSUER'),
             'sub' => [
-                "id" => $data->user_id,
+                "id" => $data->id,
             ],
             'iat' => time(),
             'exp' => time() + (60 * 60 * 24 * 30) // Expiration time
@@ -53,7 +53,7 @@ class AuthController extends Controller {
 
 
 			if($app_key != null) {
-				$token->token_value = $jwt;
+				$token->token_value = hash_hmac("sha256",  $jwt, env("JWT_SECRET"));
 				$token->token_app_key_id = $app_key->app_key_id;
 				$token->token_user_id = $get->id;
 
@@ -159,7 +159,7 @@ class AuthController extends Controller {
 
 
 					if($app_key != null) {
-						$token->token_value = $jwt;
+						$token->token_value = hash_hmac("sha256",  $jwt, env("JWT_SECRET"));
 						$token->token_app_key_id = $app_key->app_key_id;
 						$token->token_user_id = $get->id;
 
