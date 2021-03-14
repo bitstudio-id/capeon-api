@@ -25,7 +25,7 @@ class Authenticate {
         $bearer =  'Bearer';
 
         if(!$token) {
-            throw new BadRequestException("token_not_provided");
+            throw new UnAuthorizedException("token_not_provided");
         }
 
         $tokenExplode = explode(" ", $token);
@@ -52,10 +52,6 @@ class Authenticate {
 
         $app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
                             ->first();
-
-        if($app_key == null) {
-            throw new BadRequestException("app_key_not_provided");
-        }
 
         if($app_key->app_key_id != $tokenCheck->token_app_key_id) {
             throw new UnAuthorizedException("missmatch_token_and_app_id");

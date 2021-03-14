@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Self;
 use App\Exceptions\BadRequestException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LaporStoreRequest;
+use App\Http\Transformers\Self\LaporTransformer;
 use App\Models\Self\Lapor;
 use App\Models\Self\LaporBank;
 use App\Models\Self\LaporFoto;
@@ -12,17 +13,46 @@ use App\Models\Self\LaporMedia;
 use App\Models\Self\LaporThumbnail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
 class LaporController extends Controller {
 	public function index(Request $request)
 	{
+		$per_page = 20;
+
+		if($request->filled("per_page")) {
+			$per_page = $request->per_page;
+		}
+
+		$data = Lapor::query()->with("foto", "media", "bank", "bank.bank");
+
+		if($per_page < 0) {
+			$data = $data->get();
+			return $this->response->collection($data, new LaporTransformer, ["key" => "data"]);
+		} else {
+			if($per_page > 100) {
+				throw new BadRequestException("max_value_per_page_is_100");
+			}
+
+			$data = $data->paginate($per_page);
+			return $this->response->paginator($data, new LaporTransformer, ["key" => "data"]);
+		}
 
 	}
 
 	public function store(LaporStoreRequest $request)
 	{
+		// $error = new MessageBag();
+
+		// $error->add('error_1', 'message_1_1');
+		// $error->add('error_1', 'message_1_2');
+		// $error->add('error_2', 'message_2_1');
+
+		// throw new BadRequestException("error_processing_request", $error);
+		
+
 		DB::beginTransaction();
 
 		try {
@@ -99,16 +129,13 @@ class LaporController extends Controller {
 
 		        move_uploaded_file($temp, $dir."/".$file_name);
 
-		        // $order_detail->order_detail_foto = "media/images/".$file_name;
-
 				$lapor_foto = new LaporFoto();
 				$lapor_foto->lapor_foto_lapor_id = $lapor->lapor_id;
-				$lapor_foto->lapor_foto_url = "images/lapor/".$file_name;
+				$lapor_foto->lapor_foto_original = "images/lapor/".$file_name;
 				$lapor_foto->lapor_foto_nama_file = $value;
 				$lapor_foto->lapor_foto_created_at = $date;
 				$lapor_foto->lapor_foto_created_by = auth()->id();
-				$lapor_foto->save();
-
+				
 				// resize
 				$imgResize = Image::make(public_path($lapor_foto->lapor_foto_url));
 
@@ -117,7 +144,6 @@ class LaporController extends Controller {
 						$imgResize->resize(1280, null, function ($constraint) {
 						    $constraint->aspectRatio();
 						});
-						// $imgResize->resize(1280, null);
 					}
 				}
 
@@ -129,32 +155,24 @@ class LaporController extends Controller {
 					}
 				}
 				
-				$imgResize->save(public_path($lapor_foto->lapor_foto_url));
-
-
-				$lapor_thumbnail = new LaporThumbnail();
-				$lapor_thumbnail->lapor_thumbnail_lapor_foto_id = $lapor_foto->lapor_foto_id;
-				$lapor_thumbnail->lapor_thumbnail_lapor_id = $lapor->lapor_id;
+				$imgResize->save(public_path($lapor_foto->lapor_foto_url), 75);
 
 				// generate thumbnail
 				$thumbSquare = Image::make(public_path($lapor_foto->lapor_foto_url))->fit(500, 500);
 				
-				$lapor_thumbnail->lapor_thumbnail_square_url = '/images/lapor/thumbnail/square/' . $file_name;
+				$lapor_foto->lapor_foto_square = '/images/lapor/thumbnail/square/' . $file_name;
 			    
-			    $thumbSquarePath = public_path($lapor_thumbnail->lapor_thumbnail_square_url);
-			    $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath);
+			    $thumbSquarePath = public_path($lapor_foto->lapor_foto_square);
+			    $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath, 75);
 
 			    $thumbLandscape = Image::make(public_path($lapor_foto->lapor_foto_url))->fit(500, 375);
 				
-				$lapor_thumbnail->lapor_thumbnail_landscape_url = '/images/lapor/thumbnail/landscape/' . $file_name;
+				$lapor_foto->lapor_foto_landscape = '/images/lapor/thumbnail/landscape/' . $file_name;
 			    
-			    $thumbLandscapePath = public_path($lapor_thumbnail->lapor_thumbnail_landscape_url);
-			    $thumbLandscapeImage = Image::make($thumbLandscape)->save($thumbLandscapePath);
+			    $thumbLandscapePath = public_path($lapor_foto->lapor_foto_landscape);
+			    $thumbLandscapeImage = Image::make($thumbLandscape)->save($thumbLandscapePath, 75);
 
-			    $lapor_thumbnail->lapor_thumbnail_created_at = $date;
-				$lapor_thumbnail->lapor_thumbnail_created_by = auth()->id();
-
-				$lapor_thumbnail->save();
+				$lapor_foto->save();
 			}
 
 
@@ -173,13 +191,24 @@ class LaporController extends Controller {
 		}
 	}
 
-	public function show($id)
-	{
-		
-	}
-
 	public function delete($id)
 	{
-		
+		$data = Lapor::where("lapor_id", $id)
+						->lockForUpdate()
+						->first();
+
+		$data->lapor_deleted_at = date("Y-m-d H:i:s");
+		$data->lapor_deleted_by = auth()->id();
+
+		$data->save();
+
+		$data = [
+            "meta" => [
+            	"message"   => "laporan_berhasil_dihapus",
+            ],
+            "data"      => null
+        ];
+
+        return response()->json($data, 200);
 	}
 }
