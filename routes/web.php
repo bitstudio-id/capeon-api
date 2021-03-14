@@ -62,7 +62,7 @@ $api->version('v1', function ($api) {
 	], function($api){
 		$api->group([
 			'middleware' => [
-				"app.key",
+				// "app.key",
 				"auth"
 			],
 		], function($api){
