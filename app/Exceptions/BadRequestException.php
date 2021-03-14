@@ -35,7 +35,7 @@ class BadRequestException extends HttpException implements MessageBagErrors
             $this->errors = is_array($errors) ? new MessageBag($errors) : $errors;
         }
 
-        parent::__construct(400, $message, $previous, $headers, $code);
+        parent::__construct(400, strtolower($message), $previous, $headers, $code);
     }
 
     /**
