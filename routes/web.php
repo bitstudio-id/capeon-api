@@ -68,6 +68,7 @@ $api->version('v1', function ($api) {
 		], function($api){
 			$api->get('', 'LaporController@index');
 			$api->post('', 'LaporController@store');
+			$api->get('self', 'LaporController@self');
 			$api->delete('{id}', 'LaporController@delete');
 		});
 	});
