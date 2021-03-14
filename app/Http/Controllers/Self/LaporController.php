@@ -114,6 +114,7 @@ class LaporController extends Controller {
 
 			foreach ($_FILES['foto']["tmp_name"] as $key => $value) {
 
+
 				$temp   = $value;
 		        $name   = $_FILES['foto']['name'][$key];
 		        $size   = $_FILES['foto']['size'][$key];
@@ -126,9 +127,11 @@ class LaporController extends Controller {
 		        $file_name = $now."-".Str::random(32).".".$extension;
 
 		        $dir = public_path("images/lapor");
+				
 
 		        move_uploaded_file($temp, $dir."/".$file_name);
 
+				// dd($temp, $dir."/".$file_name);
 				$lapor_foto = new LaporFoto();
 				$lapor_foto->lapor_foto_lapor_id = $lapor->lapor_id;
 				$lapor_foto->lapor_foto_original = "images/lapor/".$file_name;
@@ -137,7 +140,7 @@ class LaporController extends Controller {
 				$lapor_foto->lapor_foto_created_by = auth()->id();
 				
 				// resize
-				$imgResize = Image::make(public_path($lapor_foto->lapor_foto_url));
+				$imgResize = Image::make(public_path($lapor_foto->lapor_foto_original));
 
 				if($imgResize->width() > $imgResize->height()) {
 					if($imgResize->width() > 1280) {
@@ -155,17 +158,17 @@ class LaporController extends Controller {
 					}
 				}
 				
-				$imgResize->save(public_path($lapor_foto->lapor_foto_url), 75);
+				$imgResize->save(public_path($lapor_foto->lapor_foto_original), 75);
 
 				// generate thumbnail
-				$thumbSquare = Image::make(public_path($lapor_foto->lapor_foto_url))->fit(500, 500);
+				$thumbSquare = Image::make(public_path($lapor_foto->lapor_foto_original))->fit(500, 500);
 				
 				$lapor_foto->lapor_foto_square = '/images/lapor/thumbnail/square/' . $file_name;
 			    
 			    $thumbSquarePath = public_path($lapor_foto->lapor_foto_square);
 			    $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath, 75);
 
-			    $thumbLandscape = Image::make(public_path($lapor_foto->lapor_foto_url))->fit(500, 375);
+			    $thumbLandscape = Image::make(public_path($lapor_foto->lapor_foto_original))->fit(500, 375);
 				
 				$lapor_foto->lapor_foto_landscape = '/images/lapor/thumbnail/landscape/' . $file_name;
 			    
