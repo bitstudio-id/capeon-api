@@ -1,14 +1,15 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class RegisterToken extends Model
 {
-    use SoftDeletes;
-    protected $table      = 't_register_token';
+    use SoftDeletes, LogsActivity;
+    
+    protected $table      = 'register_token';
     protected $primaryKey = 'register_token_id';
 
     const CREATED_AT      = 'register_token_created_at';

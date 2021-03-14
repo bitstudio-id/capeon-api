@@ -98,6 +98,8 @@ $app->register(Nord\Lumen\Cors\CorsServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
+$app->register(Spatie\Activitylog\ActivitylogServiceProvider::class);
+$app->register(Intervention\Image\ImageServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

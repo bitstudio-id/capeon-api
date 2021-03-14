@@ -29,6 +29,15 @@ $router->get('/', function () use ($router) {
 $api->version('v1', function ($api) {
 	$api->group([
 		'namespace' => 'App\Http\Controllers' ,
+		'prefix' => 'auth',
+	], function($api){
+		$api->post('token', 'AuthController@token');
+		$api->post('register', 'AuthController@register');
+		$api->post('register-confirm', 'AuthController@registerConfirm');
+	});
+
+	$api->group([
+		'namespace' => 'App\Http\Controllers' ,
 		'prefix' => 'test',
 	], function($api){
 		$api->group([
@@ -40,15 +49,20 @@ $api->version('v1', function ($api) {
 		});
 
 	});
-});
 
-$api->version('v1', function ($api) {
 	$api->group([
-		'namespace' => 'App\Http\Controllers' ,
-		'prefix' => 'auth',
+		'namespace' => 'App\Http\Controllers\Self' ,
+		'prefix' => 'lapor',
 	], function($api){
-		$api->post('token', 'AuthController@token');
-		$api->post('register', ' AuthController@register');
-		$api->post('register-confirm', 'AuthController@registerConfirm');
+		$api->group([
+			'middleware' => [
+				"auth"
+			],
+		], function($api){
+			$api->get('', 'LaporController@index');
+			$api->post('', 'LaporController@store');
+			$api->get('{id}', 'LaporController@show');
+			$api->delete('{id}', 'LaporController@delete');
+		});
 	});
 });
