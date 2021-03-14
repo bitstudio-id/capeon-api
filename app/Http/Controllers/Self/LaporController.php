@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Self;
 
 use App\Exceptions\BadRequestException;
+use App\Exceptions\ForbiddenException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LaporStoreRequest;
 use App\Http\Transformers\Self\LaporTransformer;
@@ -26,7 +27,35 @@ class LaporController extends Controller {
 			$per_page = $request->per_page;
 		}
 
-		$data = Lapor::query()->with("foto", "media", "bank", "bank.bank");
+		$data = Lapor::query()->with("foto", "media", "bank", "bank.bank")
+							->orderBy("lapor_id", "desc")
+							->where("lapor_status", "publish");
+
+		if($per_page < 0) {
+			$data = $data->get();
+			return $this->response->collection($data, new LaporTransformer, ["key" => "data"]);
+		} else {
+			if($per_page > 100) {
+				throw new BadRequestException("max_value_per_page_is_100");
+			}
+
+			$data = $data->paginate($per_page);
+			return $this->response->paginator($data, new LaporTransformer, ["key" => "data"]);
+		}
+
+	}
+
+	public function self(Request $request)
+	{
+		$per_page = 20;
+
+		if($request->filled("per_page")) {
+			$per_page = $request->per_page;
+		}
+
+		$data = Lapor::query()->with("foto", "media", "bank", "bank.bank")
+							->orderBy("lapor_id", "desc")
+							->where("lapor_created_by", auth()->id());
 
 		if($per_page < 0) {
 			$data = $data->get();
@@ -199,6 +228,11 @@ class LaporController extends Controller {
 		$data = Lapor::where("lapor_id", $id)
 						->lockForUpdate()
 						->first();
+
+		if($data->lapor_created_by == auth()->id()){
+			throw new ForbiddenException("forbidden");
+			
+		}
 
 		$data->lapor_deleted_at = date("Y-m-d H:i:s");
 		$data->lapor_deleted_by = auth()->id();
