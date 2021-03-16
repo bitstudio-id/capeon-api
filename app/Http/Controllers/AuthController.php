@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller {
-	protected function jwt($data) {
+	private function jwt($data) {
         $payload = [
             'iss' => env('JWT_ISSUER'),
             'sub' => [
@@ -47,10 +47,9 @@ class AuthController extends Controller {
 
 			$token = new Token();
 
-			$app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
+			$app_key = AppKey::where("app_key_value", $request->header("X-App-Key"))
 								->where("app_key_active", 1)
 								->first();
-
 
 			if($app_key != null) {
 				$token->token_value = hash_hmac("sha256",  $jwt, env("JWT_SECRET"));
@@ -75,11 +74,8 @@ class AuthController extends Controller {
 				}
 
 			} else {
-				throw new BadRequestException("invalid_app_key");
+				throw new BadRequestException("invalid_username_or_password");
 			}
-
-		} else {
-			throw new BadRequestException("invalid_username_or_password");
 		}
 	}
 
@@ -153,7 +149,7 @@ class AuthController extends Controller {
 
 					$token = new Token();
 
-					$app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
+					$app_key = AppKey::where("app_key_value", $request->header("X-App-Key"))
 										->where("app_key_active", 1)
 										->first();
 

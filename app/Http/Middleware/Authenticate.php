@@ -22,21 +22,18 @@ class Authenticate {
     {
         $token = $request->header('authorization');
 
-        $bearer =  'Bearer';
-
         if(!$token) {
-            throw new UnAuthorizedException("token_not_provided");
+            throw new UnAuthorizedException("bearer_token_not_provided");
         }
 
-        $tokenExplode = explode(" ", $token);
-        $token = $tokenExplode[1];
+        $token = trim(str_replace("Bearer", "", $token));
 
         try {
             $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
         } catch(ExpiredException $e) {
-            throw new UnAuthorizedException("token_expired");
+            throw new UnAuthorizedException("bearer_token_expired");
         } catch(Exception $e) {
-            throw new UnAuthorizedException("invalid_token");
+            throw new UnAuthorizedException("invalid_bearer_token");
         }
 
         // cek apakah token di blok atau tidak
@@ -47,14 +44,14 @@ class Authenticate {
             ->first();
 
         if($tokenCheck == null) {
-            throw new UnAuthorizedException("token_not_allowed");
+            throw new UnAuthorizedException("bearer_token_not_allowed");
         }
 
-        $app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
+        $app_key = AppKey::where("app_key_value", $request->header("x-app-key"))
                             ->first();
 
         if($app_key->app_key_id != $tokenCheck->token_app_key_id) {
-            throw new UnAuthorizedException("missmatch_token_and_app_id");
+            throw new UnAuthorizedException("missmatch_bearer_token_and_app_id");
         }
 
         return $next($request);

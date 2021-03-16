@@ -62,6 +62,13 @@ $app->singleton(
 $app->configure('app');
 $app->configure('api');
 $app->configure('cors');
+$app->configure('permission');
+$app->configure('activitylog');
+$app->configure('auth');
+
+
+$app->alias('cache', \Illuminate\Cache\CacheManager::class); 
+
 
 /*
 |--------------------------------------------------------------------------
@@ -76,11 +83,15 @@ $app->configure('cors');
 
 $app->middleware([
     Nord\Lumen\Cors\CorsMiddleware::class,
+    App\Http\Middleware\Timestamp::class,
 ]);
 
 $app->routeMiddleware([
-	'app.key' => App\Http\Middleware\AppKeyValid::class,
+	'key' => App\Http\Middleware\AppKeyValid::class,
     'auth' => App\Http\Middleware\Authenticate::class,
+    'checksum' => App\Http\Middleware\Checksum::class,
+    'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
+    'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
 ]);
 
 /*
@@ -101,7 +112,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Spatie\Activitylog\ActivitylogServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
-
+$app->register(Spatie\Permission\PermissionServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -117,6 +128,11 @@ $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
     require __DIR__.'/../routes/web.php';
+    require __DIR__.'/../routes/auth.php';
+    require __DIR__.'/../routes/self/bank.php';
+    require __DIR__.'/../routes/self/lapor.php';
+    require __DIR__.'/../routes/self/media.php';
+    require __DIR__.'/../routes/self/test.php';
 });
 
 return $app;
