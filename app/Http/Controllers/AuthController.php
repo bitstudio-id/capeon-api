@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller {
-	protected function jwt($data) {
+	private function jwt($data) {
         $payload = [
             'iss' => env('JWT_ISSUER'),
             'sub' => [
@@ -73,8 +73,9 @@ class AuthController extends Controller {
 					throw new BadRequestException($e->getMessage());
 				}
 
-		} else {
-			throw new BadRequestException("invalid_username_or_password");
+			} else {
+				throw new BadRequestException("invalid_username_or_password");
+			}
 		}
 	}
 

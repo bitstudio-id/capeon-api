@@ -16,8 +16,8 @@ class Timestamp {
         // if (now()->diffInSeconds(Carbon::parse($timestamp)) > 30) {
         //     throw new \RuntimeException('Service blocked! Invalid Timestamp Synchronization');
         // }
-        
-        if(strlen($request->header("X-Timestamp")) == 0) {
+
+        if(strlen($request->header("x-timestamp")) == 0) {
             throw new BadRequestException("timestamp_not_provided");
         }
 

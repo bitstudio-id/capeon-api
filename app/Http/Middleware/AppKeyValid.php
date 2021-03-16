@@ -15,7 +15,7 @@ class AppKeyValid {
 
     public function handle($request, Closure $next, $guard = null)
     {
-        $app_key = AppKey::where("app_key_value", $request->header("X-App-Key"))
+        $app_key = AppKey::where("app_key_value", $request->header("x-app-key"))
                             ->first();
 
         if($app_key == null) {

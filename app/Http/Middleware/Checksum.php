@@ -15,15 +15,15 @@ class Checksum {
 
     public function handle($request, Closure $next, $guard = null)
     {
-        $app_key = AppKey::where("app_key_value", $request->header("X-App-Key"))
+        $app_key = AppKey::where("app_key_value", $request->header("x-app-key"))
                             ->first();
 
         $value_to_int = string_value_to_int($request->all());
         $value_json = json_encode($value_to_int);
-        $hash_hmac_sha256 = hash_hmac("sha256", $value_json."|".$request->header("X-Timestamp"), $app_key->app_key_checksum);
+        $hash_hmac_sha256 = hash_hmac("sha256", $value_json."|".$request->header("x-timestamp"), $app_key->app_key_checksum);
 
-        if($hash_hmac_sha256 != $request->header("X-Checksum")) {
-            if(strlen($request->header("X-Checksum")) > 0){
+        if($hash_hmac_sha256 != $request->header("x-checksum")) {
+            if(strlen($request->header("x-checksum")) > 0){
                 throw new BadRequestException("invalid_checksum");
             } else {
                 throw new BadRequestException("checksum_not_provided");

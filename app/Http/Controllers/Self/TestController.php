@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Self;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use phpseclib3\Crypt\RSA;
 
@@ -11,6 +12,27 @@ class TestController extends Controller {
         $data = [
             "meta" => [],
             "data"      => auth()->user()
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    public function assignRole()
+    {
+        // $user->hasRole('writer');
+        // $role->givePermissionTo('edit articles');
+        $user = User::find(1);
+        $user->assignRole("root");
+
+        $user_1 = User::find(22);
+        $user_1->assignRole("general");
+
+        $user_2 = User::find(25);
+        $user_2->assignRole("general");
+
+        $data = [
+            "meta" => [],
+            "data" => "role assigned"
         ];
 
         return response()->json($data, 200);
