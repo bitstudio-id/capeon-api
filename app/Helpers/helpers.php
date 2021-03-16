@@ -21,3 +21,25 @@ if ( ! function_exists('public_path'))
         return rtrim(app()->basePath('public/' . $path), '/');
     }
 }
+
+if ( ! function_exists('string_value_to_int'))
+{
+    function string_value_to_int($value)
+    {
+        $tmp = [];
+
+        if(is_array($value)) {
+            foreach ($value as $key => $value) {
+                $tmp[$key] = string_value_to_int($value);
+            }
+        } else {
+            if(is_numeric($value)) {
+                $tmp = $value + 0;
+            } else {
+                $tmp = $value;
+            }
+        }
+
+        return $tmp;
+    }
+}

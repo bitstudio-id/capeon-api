@@ -26,12 +26,16 @@ $router->get('/', function () use ($router) {
     ];
 });
 
-$api->version('v1', function ($api) {
+$api->version('v1', [
+	'middleware' => 'api.throttle', 
+	'limit' => 60, 
+	'expires' => 1
+] ,function ($api) {
 	$api->group([
 		'namespace' => 'App\Http\Controllers' ,
 		'prefix' => 'auth',
 		'middleware' => [
-				"app.key",
+				"key",
 			],
 	], function($api){
 		$api->post('token', 'AuthController@token');
@@ -46,13 +50,27 @@ $api->version('v1', function ($api) {
 	], function($api){
 		$api->group([
 			'middleware' => [
-				"app.key",
-				"auth",
+				"key"
 			],
 		], function($api){
-			$api->get('auth', 'TestController@auth');
-		});
+			$api->group([
+				'middleware' => [
+					"auth"
+				],
+			], function($api){
+				$api->get('auth', 'TestController@auth');
+			});
 
+			$api->group([
+				'middleware' => [
+					"checksum"
+				],
+			], function($api){
+				$api->post('checksum', 'TestController@checksum');
+			});
+			
+		});
+		$api->get('phpinfo', 'TestController@phpinfo');
 	});
 
 	// lapor
@@ -62,12 +80,19 @@ $api->version('v1', function ($api) {
 	], function($api){
 		$api->group([
 			'middleware' => [
-				"app.key",
+				"key",
 				"auth"
 			],
 		], function($api){
+			$api->group([
+				'middleware' => [
+					"checksum"
+				],
+			], function($api){
+				$api->post('', 'LaporController@store');
+			});
+			
 			$api->get('', 'LaporController@index');
-			$api->post('', 'LaporController@store');
 			$api->get('self', 'LaporController@self');
 			$api->delete('{id}', 'LaporController@delete');
 		});
@@ -80,7 +105,7 @@ $api->version('v1', function ($api) {
 	], function($api){
 		$api->group([
 			'middleware' => [
-				"app.key",
+				"key",
 				"auth"
 			],
 		], function($api){
@@ -95,7 +120,7 @@ $api->version('v1', function ($api) {
 	], function($api){
 		$api->group([
 			'middleware' => [
-				"app.key",
+				"key",
 				"auth"
 			],
 		], function($api){

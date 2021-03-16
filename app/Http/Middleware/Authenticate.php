@@ -50,7 +50,7 @@ class Authenticate {
             throw new UnAuthorizedException("token_not_allowed");
         }
 
-        $app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
+        $app_key = AppKey::where("app_key_value", $request->header("X-App-Key"))
                             ->first();
 
         if($app_key->app_key_id != $tokenCheck->token_app_key_id) {

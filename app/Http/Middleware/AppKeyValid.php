@@ -15,11 +15,15 @@ class AppKeyValid {
 
     public function handle($request, Closure $next, $guard = null)
     {
-        $app_key = AppKey::where("app_key_key", $request->header("X-App-Key"))
+        $app_key = AppKey::where("app_key_value", $request->header("X-App-Key"))
                             ->first();
 
         if($app_key == null) {
-            throw new BadRequestException("app_key_not_provided");
+            if(strlen($request->header("X-Checksum")) > 0) {
+                throw new BadRequestException("invalid_app_key");
+            } else {
+                throw new BadRequestException("app_key_not_provided");
+            }
         }
 
         return $next($request);
