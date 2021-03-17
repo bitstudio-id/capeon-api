@@ -2,34 +2,30 @@
 
 namespace App\Http\Controllers\Self;
 
-use App\Exceptions\BadRequestException;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\Self\MediaTransformer;
 use App\Models\Self\Media;
+use Cacing69\BITBuilder\BITBuilder;
+use Cacing69\BITBuilder\Filterable;
+use Cacing69\BITBuilder\Sortable;
 use Illuminate\Http\Request;
 
 class MediaController extends Controller {
 	public function index(Request $request)
 	{
-		$per_page = 20;
+		$data = BITBuilder::on(Media::class)
+						->addFilters([
+							Filterable::exact("id", "media_id")
+						])
+						->addSorts([
+							Sortable::field('id', 'media_id'),
+						])
+						->defaultSort("media_id")
+						->removeLimit()
+						->get();
 
-		if($request->filled("per_page")) {
-			$per_page = $request->per_page;
-		}
-
-		$data = Media::query();
-
-		if($per_page < 0) {
-			$data = $data->get();
-			return $this->response->collection($data, new MediaTransformer, ["key" => "data"]);
-		} else {
-			if($per_page > 100) {
-				throw new BadRequestException("max_value_per_page_is_100");
-			}
-			
-			$data = $data->paginate($per_page);
-			return $this->response->paginator($data, new MediaTransformer, ["key" => "data"]);
-		}
+		return $this->response
+					->collection($data, new MediaTransformer, ["key" => "data"]);
 
 	}
 }

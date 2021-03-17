@@ -22,13 +22,13 @@ class Checksum {
         $value_json = json_encode($value_to_int);
         $hash_hmac_sha256 = hash_hmac("sha256", $value_json."|".$request->header("x-timestamp"), $app_key->app_key_checksum);
 
-        if($hash_hmac_sha256 != $request->header("x-checksum")) {
-            if(strlen($request->header("x-checksum")) > 0){
-                throw new BadRequestException("invalid_checksum");
-            } else {
-                throw new BadRequestException("checksum_not_provided");
-            }
-        }
+        // if($hash_hmac_sha256 != $request->header("x-checksum")) {
+        //     if(strlen($request->header("x-checksum")) > 0){
+        //         throw new BadRequestException("invalid_checksum");
+        //     } else {
+        //         throw new BadRequestException("checksum_not_provided");
+        //     }
+        // }
 
         return $next($request);
     }
