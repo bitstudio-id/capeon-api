@@ -12,6 +12,9 @@ use App\Models\Self\LaporBank;
 use App\Models\Self\LaporFoto;
 use App\Models\Self\LaporMedia;
 use App\Models\Self\LaporThumbnail;
+use Cacing69\BITBuilder\BITBuilder;
+use Cacing69\BITBuilder\Filterable;
+use Cacing69\BITBuilder\Sortable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
@@ -21,53 +24,67 @@ use Intervention\Image\Facades\Image;
 class LaporController extends Controller {
 	public function index(Request $request)
 	{
-		$per_page = 20;
+		$data = BITBuilder::on(Lapor::class)
+						->addFilters([
+							Filterable::exact("id", "lapor_id"),
+							Filterable::greaterThanEqual("id", "lapor_id"),
+							Filterable::callback("status", function($query, $value) {
+								$query->where('lapor_status', $value);
+							})
+						])
+						->addSorts([
+							Sortable::field('id', 'lapor_id'),
+						])
+						->defaultSort("lapor_id")
+						->with("foto", "media", "bank", "bank.bank", "user")
+						->where("lapor_status", "publish");
 
-		if($request->filled("per_page")) {
-			$per_page = $request->per_page;
+		if($request->filled("last_id")) {
+			$data = $data->where("lapor_id", "<", $request->last_id);
 		}
 
-		$data = Lapor::query()->with("foto", "media", "bank", "bank.bank")
-							->orderBy("lapor_id", "desc")
-							->where("lapor_status", "publish");
+		$get_data = $data->get();
 
-		if($per_page < 0) {
-			$data = $data->get();
-			return $this->response->collection($data, new LaporTransformer, ["key" => "data"]);
-		} else {
-			if($per_page > 100) {
-				throw new BadRequestException("max_value_per_page_is_100");
-			}
+		$meta = [
+			"last_id" => $get_data[count($get_data) - 1]->lapor_id
+		];
 
-			$data = $data->paginate($per_page);
-			return $this->response->paginator($data, new LaporTransformer, ["key" => "data"]);
-		}
+		return $this->response
+					->collection($get_data, new LaporTransformer, ["key" => "data"])
+					->setMeta($meta);
 
 	}
 
-	public function self(Request $request)
+	public function Self(Request $request)
 	{
-		$per_page = 20;
+		$data = BITBuilder::on(Lapor::class)
+						->addFilters([
+							Filterable::exact("id", "lapor_id"),
+							Filterable::greaterThanEqual("id", "lapor_id"),
+							Filterable::callback("status", function($query, $value) {
+								$query->where('lapor_status', $value);
+							})
+						])
+						->addSorts([
+							Sortable::field('id', 'lapor_id'),
+						])
+						->defaultSort("lapor_id")
+						->with("foto", "media", "bank", "bank.bank", "user")
+						->where("lapor_created_by", auth()->id());
 
-		if($request->filled("per_page")) {
-			$per_page = $request->per_page;
+		if($request->filled("last_id")) {
+			$data = $data->where("lapor_id", "<", $request->last_id);
 		}
 
-		$data = Lapor::query()->with("foto", "media", "bank", "bank.bank")
-							->orderBy("lapor_id", "desc")
-							->where("lapor_created_by", auth()->id());
+		$get_data = $data->get();
 
-		if($per_page < 0) {
-			$data = $data->get();
-			return $this->response->collection($data, new LaporTransformer, ["key" => "data"]);
-		} else {
-			if($per_page > 100) {
-				throw new BadRequestException("max_value_per_page_is_100");
-			}
+		$meta = [
+			"last_id" => $get_data[count($get_data) - 1]->lapor_id
+		];
 
-			$data = $data->paginate($per_page);
-			return $this->response->paginator($data, new LaporTransformer, ["key" => "data"]);
-		}
+		return $this->response
+					->collection($get_data, new LaporTransformer, ["key" => "data"])
+					->setMeta($meta);
 
 	}
 

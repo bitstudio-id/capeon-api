@@ -10,38 +10,55 @@ class LaporTransformer extends TransformerAbstract
 
         $foto = [];
         $info = [];
+        $user = null;
 
-        foreach ($data->foto as $key => $value) {
-            $foto[] = [
-                "square" => url($value->lapor_foto_square),
-                "landscape" => url($value->lapor_foto_landscape),
-                "original" => url($value->lapor_foto_original),
-            ];
-        }
+        // dd($data, "foto"));
 
-        foreach ($data->media as $key => $value) {
-            $meta = null;
-
-            if($value->media->media_nama_pendek == "ig") {
-                $meta = [
-                    "link" => $value->media->media_url."/".$value->lapor_media_nama
+        if(isset($data->foto)) {
+            foreach (@$data->foto as $key => $value) {
+                $foto[] = [
+                    "square" => url($value->lapor_foto_square),
+                    "landscape" => url($value->lapor_foto_landscape),
+                    "original" => url($value->lapor_foto_original),
                 ];
             }
+        }
 
-            $info[] = [
-                "ikon" => url($value->media->media_logo),
-                "teks" => $value->lapor_media_nama,
-                "meta" => $meta,
+        if(isset($data->media)) {
+            foreach ($data->media as $key => $value) {
+                $meta = null;
+
+                if($value->media->media_nama_pendek == "ig") {
+                    $meta = [
+                        "link" => $value->media->media_url."/".$value->lapor_media_nama
+                    ];
+                }
+
+                $info[] = [
+                    "ikon" => url($value->media->media_logo),
+                    "teks" => $value->lapor_media_nama,
+                    "meta" => $meta,
+                ];
+            }
+        }
+
+        if(isset($data->bank)) {
+            foreach ($data->bank as $key => $value) {
+                $info[] = [
+                    "ikon" => url($value->bank->bank_logo),
+                    "teks" => $value->bank->bank_nama_pendek." | ".$value->lapor_bank_nomor_rekening,
+                    "meta" => null,
+                ];
+            }   
+        }
+
+        if(isset($data->user)) {
+            $user = [
+                "id" => $data->user->id,
+                "nama" => $data->user->nama
             ];
         }
 
-        foreach ($data->bank as $key => $value) {
-            $info[] = [
-                "ikon" => url($value->bank->bank_logo),
-                "teks" => $value->bank->bank_nama_pendek." | ".$value->lapor_bank_nomor_rekening,
-                "meta" => null,
-            ];
-        }
 
     	$transform = [
             'id' => $data->lapor_id,
@@ -49,10 +66,7 @@ class LaporTransformer extends TransformerAbstract
             'kronologi' => $data->lapor_kronologi,
             "status" => $data->lapor_status,
             "foto" => $foto,
-            "user" => [
-                "id" => $data->user->id,
-                "nama" => $data->user->nama
-            ],
+            "user" => $user,
             "info" => $info,
             "tanggal" => $data->lapor_created_at,
         ];
