@@ -46,7 +46,7 @@ class LaporController extends Controller {
 		$get_data = $data->get();
 
 		$meta = [
-			"last_id" => $get_data[count($get_data) - 1]->lapor_id
+			"last_id" => get_last_id($get_data, "lapor_id")
 		];
 
 		return $this->response
@@ -79,7 +79,7 @@ class LaporController extends Controller {
 		$get_data = $data->get();
 
 		$meta = [
-			"last_id" => $get_data[count($get_data) - 1]->lapor_id
+			"last_id" => get_last_id($get_data, "lapor_id")
 		];
 
 		return $this->response
