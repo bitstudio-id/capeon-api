@@ -22,6 +22,18 @@ if ( ! function_exists('public_path'))
     }
 }
 
+if ( ! function_exists('get_last_id'))
+{
+    function get_last_id($array, $key)
+    {
+        if(count($array) > 0) {
+            return $array[count($array) - 1]->{$key};
+        } else {    
+            return null;
+        }
+    }
+}
+
 if ( ! function_exists('string_value_to_int'))
 {
     function string_value_to_int($value)
