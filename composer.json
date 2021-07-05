@@ -25,8 +25,7 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
-            "Cacing69\\BITBuilder\\": "packages/BITBuilder/src/"
+            "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
             "app/Helpers/helpers.php"
@@ -34,6 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Cacing69\\BITBuilder\\": "packages/BITBuilder/src"
         },
         "classmap": [
             "tests/"
