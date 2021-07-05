@@ -116,7 +116,7 @@ $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Spatie\Activitylog\ActivitylogServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
 $app->register(Spatie\Permission\PermissionServiceProvider::class);
-// $app->register(Cacing69\BITBuilder\BITBuilderServiceProvider::class);
+$app->register(Cacing69\BITBuilder\BITBuilderServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
