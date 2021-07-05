@@ -137,6 +137,7 @@ $app->router->group([
     require __DIR__.'/../routes/self/lapor.php';
     require __DIR__.'/../routes/self/media.php';
     require __DIR__.'/../routes/self/test.php';
+    require __DIR__.'/../routes/self/kredibel.php';
 });
 
 return $app;
