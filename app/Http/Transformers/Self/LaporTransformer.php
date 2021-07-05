@@ -68,7 +68,7 @@ class LaporTransformer extends TransformerAbstract
             "foto" => $foto,
             "user" => $user,
             "info" => $info,
-            "tanggal" => $data->lapor_created_at,
+            "tanggal" => strtotime($data->lapor_created_at),
         ];
 
         return $transform;

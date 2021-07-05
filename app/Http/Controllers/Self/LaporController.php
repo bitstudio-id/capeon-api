@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Self;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\ForbiddenException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\UnAuthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LaporStoreRequest;
 use App\Http\Transformers\Self\LaporTransformer;
@@ -24,6 +26,7 @@ use Intervention\Image\Facades\Image;
 class LaporController extends Controller {
 	public function index(Request $request)
 	{
+		// dd(date('Y-m-d H:i:s', 1615716322));
 		$data = BITBuilder::on(Lapor::class)
 						->addFilters([
 							Filterable::exact("id", "lapor_id"),
@@ -55,7 +58,7 @@ class LaporController extends Controller {
 
 	}
 
-	public function Self(Request $request)
+	public function self(Request $request)
 	{
 		$data = BITBuilder::on(Lapor::class)
 						->addFilters([
@@ -90,15 +93,6 @@ class LaporController extends Controller {
 
 	public function store(LaporStoreRequest $request)
 	{
-		// $error = new MessageBag();
-
-		// $error->add('error_1', 'message_1_1');
-		// $error->add('error_1', 'message_1_2');
-		// $error->add('error_2', 'message_2_1');
-
-		// throw new BadRequestException("error_processing_request", $error);
-		
-
 		DB::beginTransaction();
 
 		try {
@@ -183,7 +177,7 @@ class LaporController extends Controller {
 				$lapor_foto->lapor_foto_created_by = auth()->id();
 				
 				// resize
-				$imgResize = Image::make(public_path($lapor_foto->lapor_foto_url));
+				$imgResize = Image::make(public_path($lapor_foto->lapor_foto_original));
 
 				if($imgResize->width() > $imgResize->height()) {
 					if($imgResize->width() > 1280) {
@@ -201,17 +195,17 @@ class LaporController extends Controller {
 					}
 				}
 				
-				$imgResize->save(public_path($lapor_foto->lapor_foto_url), 75);
+				$imgResize->save(public_path($lapor_foto->lapor_foto_original), 75);
 
 				// generate thumbnail
-				$thumbSquare = Image::make(public_path($lapor_foto->lapor_foto_url))->fit(500, 500);
+				$thumbSquare = Image::make(public_path($lapor_foto->lapor_foto_original))->fit(500, 500);
 				
 				$lapor_foto->lapor_foto_square = '/images/lapor/thumbnail/square/' . $file_name;
 			    
 			    $thumbSquarePath = public_path($lapor_foto->lapor_foto_square);
 			    $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath, 75);
 
-			    $thumbLandscape = Image::make(public_path($lapor_foto->lapor_foto_url))->fit(500, 375);
+			    $thumbLandscape = Image::make(public_path($lapor_foto->lapor_foto_original))->fit(500, 375);
 				
 				$lapor_foto->lapor_foto_landscape = '/images/lapor/thumbnail/landscape/' . $file_name;
 			    

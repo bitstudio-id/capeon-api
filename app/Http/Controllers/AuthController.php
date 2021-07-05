@@ -38,6 +38,7 @@ class AuthController extends Controller {
         	->orWhere("nama_pengguna", $request->username)
 			->first();
 
+
         if ($get == null) {
 			throw new NotFoundException("user_not_found");
 		}
@@ -74,8 +75,10 @@ class AuthController extends Controller {
 				}
 
 			} else {
-				throw new BadRequestException("invalid_username_or_password");
+				throw new BadRequestException("invalid_app_key");
 			}
+		} else {
+			throw new BadRequestException("invalid_username_or_password");
 		}
 	}
 
@@ -103,8 +106,6 @@ class AuthController extends Controller {
 				$register_token->register_token_code = "202020";
 				$register_token->register_token_user_id = $user->id;
 				$register_token->save();;
-
-
 
 				$data = [
 		            "meta" => [
