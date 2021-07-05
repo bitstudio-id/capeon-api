@@ -13,12 +13,12 @@ class Timestamp {
     protected $auth;
 
     public function handle($request, Closure $next, $guard = null)
-    {
+    {   
 
-        if(strlen($request->header("x-timestamp")) == 0) {
-            throw new BadRequestException("timestamp_not_provided");
-        } else {
-            if(env("API_CHECKING", true)) {
+        if(env("API_CHECKING", true)) {
+            if(strlen($request->header("x-timestamp")) == 0) {
+                throw new BadRequestException("timestamp_not_provided");
+            } else {
                 $timestamp = $request->header("x-timestamp");
 
                 $now = Carbon::now();
@@ -29,6 +29,7 @@ class Timestamp {
                 }
             }
         }
+
         return $next($request);
     }
 }
