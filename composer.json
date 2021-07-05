@@ -33,7 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cacing69\\BITBuilder\\": "packages/BITBuilder/src"
+            "Cacing69\\BITBuilder\\": "packages/BITBuilder/src/"
         },
         "classmap": [
             "tests/"
