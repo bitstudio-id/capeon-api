@@ -155,6 +155,7 @@ class LaporController extends Controller {
 
 			foreach ($_FILES['foto']["tmp_name"] as $key => $value) {
 
+
 				$temp   = $value;
 		        $name   = $_FILES['foto']['name'][$key];
 		        $size   = $_FILES['foto']['size'][$key];
@@ -166,9 +167,16 @@ class LaporController extends Controller {
 		        
 		        $file_name = $now."-".Str::random(32).".".$extension;
 
+<<<<<<< HEAD
+		        $dir = public_path("images/lapor");
+				
+
+=======
 		        $dir = public_app_path("images/lapor");
+>>>>>>> fbd096efa9a9126f436c49786ba11bb7737eb690
 		        move_uploaded_file($temp, $dir."/".$file_name);
 
+				// dd($temp, $dir."/".$file_name);
 				$lapor_foto = new LaporFoto();
 				$lapor_foto->lapor_foto_lapor_id = $lapor->lapor_id;
 				$lapor_foto->lapor_foto_original = "images/lapor/".$file_name;
