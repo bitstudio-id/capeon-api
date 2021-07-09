@@ -20,6 +20,7 @@ class Checksum {
 
         $value_to_int = string_value_to_int($request->all());
         $value_json = json_encode($value_to_int);
+
         $hash_hmac_sha256 = hash_hmac("sha256", $value_json."|".$request->header("x-timestamp"), $app_key->app_key_checksum);
 
         if(env("API_CHECKING", true)) {
