@@ -14,9 +14,9 @@ if ( ! function_exists('config_path'))
     }
 }
 
-if ( ! function_exists('public_path'))
+if ( ! function_exists('public_app_path'))
 {
-    function public_path($path = null)
+    function public_app_path($path = null)
     {
         return rtrim(app()->basePath('public/' . $path), '/');
     }
@@ -31,6 +31,28 @@ if ( ! function_exists('get_last_id'))
         } else {    
             return null;
         }
+    }
+}
+
+if (!function_exists('get_sql')) {
+    function get_sql($model)
+    {
+        $replace = function ($sql, $bindings) {
+            $needle = '?';
+            foreach ($bindings as $replace) {
+                $pos = strpos($sql, $needle);
+                if ($pos !== false) {
+                    if (gettype($replace) === "string") {
+                        $replace = ' "' . addslashes($replace) . '" ';
+                    }
+                    $sql = substr_replace($sql, $replace, $pos, strlen($needle));
+                }
+            }
+            return $sql;
+        };
+
+        $sql = $replace($model->toSql(), $model->getBindings());
+        return $sql;
     }
 }
 

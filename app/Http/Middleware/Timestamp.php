@@ -24,8 +24,10 @@ class Timestamp {
                 $now = Carbon::now();
                 $parse = Carbon::parse((int) $timestamp);
 
-                if ($now->diffInSeconds($parse) > 30) {
-                    throw new \RuntimeException('service blocked! invalid timestamp sync');
+                if(!env("API_TESTING", false)) {
+                    if ($now->diffInSeconds($parse) > 30) {
+                        throw new \RuntimeException('service blocked! invalid timestamp sync');
+                    }
                 }
             }
         }

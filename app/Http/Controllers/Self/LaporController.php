@@ -46,6 +46,7 @@ class LaporController extends Controller {
 			$data = $data->where("lapor_id", "<", $request->last_id);
 		}
 
+
 		$get_data = $data->get();
 
 		$meta = [
@@ -165,8 +166,7 @@ class LaporController extends Controller {
 		        
 		        $file_name = $now."-".Str::random(32).".".$extension;
 
-		        $dir = public_path("images/lapor");
-
+		        $dir = public_app_path("images/lapor");
 		        move_uploaded_file($temp, $dir."/".$file_name);
 
 				$lapor_foto = new LaporFoto();
@@ -177,7 +177,7 @@ class LaporController extends Controller {
 				$lapor_foto->lapor_foto_created_by = auth()->id();
 				
 				// resize
-				$imgResize = Image::make(public_path($lapor_foto->lapor_foto_original));
+				$imgResize = Image::make(public_app_path($lapor_foto->lapor_foto_original));
 
 				if($imgResize->width() > $imgResize->height()) {
 					if($imgResize->width() > 1280) {
@@ -195,21 +195,21 @@ class LaporController extends Controller {
 					}
 				}
 				
-				$imgResize->save(public_path($lapor_foto->lapor_foto_original), 75);
+				$imgResize->save(public_app_path($lapor_foto->lapor_foto_original), 75);
 
 				// generate thumbnail
-				$thumbSquare = Image::make(public_path($lapor_foto->lapor_foto_original))->fit(500, 500);
+				$thumbSquare = Image::make(public_app_path($lapor_foto->lapor_foto_original))->fit(500, 500);
 				
 				$lapor_foto->lapor_foto_square = '/images/lapor/thumbnail/square/' . $file_name;
 			    
-			    $thumbSquarePath = public_path($lapor_foto->lapor_foto_square);
+			    $thumbSquarePath = public_app_path($lapor_foto->lapor_foto_square);
 			    $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath, 75);
 
-			    $thumbLandscape = Image::make(public_path($lapor_foto->lapor_foto_original))->fit(500, 375);
+			    $thumbLandscape = Image::make(public_app_path($lapor_foto->lapor_foto_original))->fit(500, 375);
 				
 				$lapor_foto->lapor_foto_landscape = '/images/lapor/thumbnail/landscape/' . $file_name;
 			    
-			    $thumbLandscapePath = public_path($lapor_foto->lapor_foto_landscape);
+			    $thumbLandscapePath = public_app_path($lapor_foto->lapor_foto_landscape);
 			    $thumbLandscapeImage = Image::make($thumbLandscape)->save($thumbLandscapePath, 75);
 
 				$lapor_foto->save();
