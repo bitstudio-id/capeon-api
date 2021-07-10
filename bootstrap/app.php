@@ -133,12 +133,12 @@ $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
     require __DIR__.'/../routes/web.php';
-    require __DIR__.'/../routes/auth.php';
-    require __DIR__.'/../routes/self/bank.php';
-    require __DIR__.'/../routes/self/lapor.php';
-    require __DIR__.'/../routes/self/media.php';
-    require __DIR__.'/../routes/self/test.php';
-    require __DIR__.'/../routes/self/kredibel.php';
+    // require __DIR__.'/../routes/auth.php';
+    // require __DIR__.'/../routes/self/bank.php';
+    // require __DIR__.'/../routes/self/lapor.php';
+    // require __DIR__.'/../routes/self/media.php';
+    // require __DIR__.'/../routes/self/test.php';
+    // require __DIR__.'/../routes/self/kredibel.php';
 });
 
 return $app;

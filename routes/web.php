@@ -1,5 +1,4 @@
 <?php
-
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 /*
@@ -12,6 +11,22 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+
+require __DIR__.'/auth.php';
+
+$routeFiles = scandir(__DIR__."/self");
+
+$exclude = [
+    ".",
+    ".."
+];
+
+// dd($dynamicRoute);
+foreach($routeFiles as $route) {
+    if(!in_array($route, $exclude)) {
+        require __DIR__.'/self/'.$route;
+    }
+}
 
 $router->get('', function () use ($router) {
     return [
