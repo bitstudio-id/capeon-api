@@ -34,3 +34,4 @@ $router->get('ping', function () use ($router) {
         "data" => [],
 
     ];
+});
