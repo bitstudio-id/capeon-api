@@ -13,7 +13,7 @@
 |
 */
 
-$router->get('/', function () use ($router) {
+$router->get('', function () use ($router) {
     return [
     	"meta" => [
     		"message" => "welcome to api capeon",
@@ -24,3 +24,5 @@ $router->get('/', function () use ($router) {
 
     ];
 });
+
+$router->get('hash', 'GeneralController@hash');

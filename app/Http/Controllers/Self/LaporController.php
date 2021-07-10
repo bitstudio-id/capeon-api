@@ -219,7 +219,7 @@ class LaporController extends Controller {
 				// dd(1);
 			}
 
-
+			commit_hash($request);
 			DB::commit();
 			$data = [
 	            "meta" => [

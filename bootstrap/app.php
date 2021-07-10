@@ -95,6 +95,7 @@ $app->routeMiddleware([
     'checksum' => App\Http\Middleware\Checksum::class,
     'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
     'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
+    'hash'       => App\Http\Middleware\Hash::class,
 ]);
 
 /*

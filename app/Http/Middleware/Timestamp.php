@@ -15,9 +15,15 @@ class Timestamp {
     public function handle($request, Closure $next, $guard = null)
     {   
 
+        $allowed = [
+            "/",
+        ];
+
         if(env("API_CHECKING", true)) {
             if(strlen($request->header("x-timestamp")) == 0) {
-                throw new BadRequestException("timestamp_not_provided");
+                if(!in_array($request->getRequestUri(), $allowed)){
+                    throw new BadRequestException("timestamp_not_provided");
+                }
             } else {
                 $timestamp = substr($request->header("x-timestamp"), 0, 10);
 

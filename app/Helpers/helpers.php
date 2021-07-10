@@ -1,5 +1,8 @@
 <?php
 
+use App\Exceptions\InvalidHashException;
+use App\Models\Hash;
+
 if ( ! function_exists('config_path'))
 {
     /**
@@ -75,5 +78,74 @@ if ( ! function_exists('string_value_to_int'))
         }
 
         return $tmp;
+    }
+}
+
+if (!function_exists('validate_hash')) {
+    function validate_hash($request)
+    {
+        if(env("APP_HASH", true)){
+            if(strlen($request->header("x-hash")) > 0) {
+                $hash = Hash::where("hash_value", $request->header("x-hash"))->first();
+                if($hash != null) {
+                    if(filter_var($hash->hash_valid, FILTER_VALIDATE_BOOLEAN)) {
+
+                        // dd($request->getRequestUri(), $hash->hash_url);
+
+                        if($request->getRequestUri() == $hash->hash_url) {
+                            if($hash->hash_created_by == null) {
+                                return $hash;
+                            } else {
+                                if(auth()->id() == $hash->hash_created_by) {
+                                    return $hash;
+                                } else {
+                                    throw new InvalidHashException("illegal_hash_action");
+                                }
+                            }
+                        } else {
+                            throw new InvalidHashException("wrong_hash_url");
+                        }
+                    } else {
+                        throw new InvalidHashException("hash_invalid");
+                    }
+                } else {
+                    throw new InvalidHashException("hash_not_registered");
+                }
+            } else {
+                throw new InvalidHashException("hash_not_provided");
+            }
+        } else {
+            return new RequestHash();
+        }
+    }
+}
+
+if (!function_exists('commit_hash')) {
+    function commit_hash($request)
+    {
+        if(env("APP_HASH", true)){
+            $hash = Hash::where("hash_value", $request->header("x-hash"))
+                            ->firstOrFail();
+
+            $data = [
+                "hash_commit_at" => date("Y-m-d H:i:s"),
+                "hash_commit_by" => auth()->id(),
+                "hash_valid" => 0,
+            ];
+
+            // update where init, from and to where created by this user
+            $updateHash = Hash::query();
+
+            if($hash->hash_created_by != null) {
+
+                $updateHash = $updateHash->where("hash_created_by", auth()->id())
+                                    ->where("hash_valid", 1)
+                                    ->where("hash_url", $hash->hash_url);
+            } else {
+                $updateHash = $updateHash->where("hash_id", $hash->hash_id);
+            }
+
+            $updateHash = $updateHash->update($data);
+        }
     }
 }

@@ -38,6 +38,7 @@ return [
         'X-App-Key',
         'X-Checksum',
         'X-Timestamp',
+        'X-Hash',
     ],
 
     /*
