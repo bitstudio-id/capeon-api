@@ -124,8 +124,7 @@ if (!function_exists('commit_hash')) {
     function commit_hash($request)
     {
         if(env("APP_HASH", true)){
-            $hash = Hash::where("hash_value", $request->header("x-hash"))
-                            ->firstOrFail();
+            $hash = validate_hash($request);
 
             $data = [
                 "hash_commit_at" => date("Y-m-d H:i:s"),
