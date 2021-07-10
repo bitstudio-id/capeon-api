@@ -19,7 +19,7 @@ class Timestamp {
             if(strlen($request->header("x-timestamp")) == 0) {
                 throw new BadRequestException("timestamp_not_provided");
             } else {
-                $timestamp = $request->header("x-timestamp");
+                $timestamp = substr($request->header("x-timestamp"), 0, 10);
 
                 $now = Carbon::now();
                 $parse = Carbon::parse((int) $timestamp);

@@ -46,7 +46,6 @@ class LaporController extends Controller {
 			$data = $data->where("lapor_id", "<", $request->last_id);
 		}
 
-
 		$get_data = $data->get();
 
 		$meta = [
@@ -94,6 +93,7 @@ class LaporController extends Controller {
 
 	public function store(LaporStoreRequest $request)
 	{
+		// dd($request->all());
 		DB::beginTransaction();
 
 		try {
@@ -167,13 +167,7 @@ class LaporController extends Controller {
 		        
 		        $file_name = $now."-".Str::random(32).".".$extension;
 
-<<<<<<< HEAD
-		        $dir = public_path("images/lapor");
-				
-
-=======
 		        $dir = public_app_path("images/lapor");
->>>>>>> fbd096efa9a9126f436c49786ba11bb7737eb690
 		        move_uploaded_file($temp, $dir."/".$file_name);
 
 				// dd($temp, $dir."/".$file_name);
@@ -183,7 +177,8 @@ class LaporController extends Controller {
 				$lapor_foto->lapor_foto_nama_file = $value;
 				$lapor_foto->lapor_foto_created_at = $date;
 				$lapor_foto->lapor_foto_created_by = auth()->id();
-				
+					
+
 				// resize
 				$imgResize = Image::make(public_app_path($lapor_foto->lapor_foto_original));
 
@@ -221,6 +216,7 @@ class LaporController extends Controller {
 			    $thumbLandscapeImage = Image::make($thumbLandscape)->save($thumbLandscapePath, 75);
 
 				$lapor_foto->save();
+				// dd(1);
 			}
 
 
@@ -245,9 +241,8 @@ class LaporController extends Controller {
 						->lockForUpdate()
 						->first();
 
-		if($data->lapor_created_by == auth()->id()){
+		if($data->lapor_created_by != auth()->id()){
 			throw new ForbiddenException("forbidden");
-			
 		}
 
 		$data->lapor_deleted_at = date("Y-m-d H:i:s");

@@ -52,10 +52,19 @@ class MediaController extends Controller {
 			// $get_data = $get_data->where("media_id", "<", $request->last_id);
 		}
 
+		if($request->filled("limit")) {
+			if(!filter_var($request->limit, FILTER_VALIDATE_BOOLEAN)) {
+				$get_data = $get_data->removeLimit();
+			}
+		}
+
+
 		if($request->filled("last_id")) {
 			$get_data = $get_data->moveCursor("media_id", $request->last_id);
 			// $get_data = $get_data->where("media_id", "<", $request->last_id);
 		}
+
+		// dd(get_sql($get_data));
 
 		$get_data = $get_data->get();
 
