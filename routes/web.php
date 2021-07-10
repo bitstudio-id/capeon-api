@@ -26,3 +26,11 @@ $router->get('', function () use ($router) {
 });
 
 $router->get('hash', 'GeneralController@hash');
+$router->get('ping', function () use ($router) {
+    return [
+        "meta" => [
+            "message" => "ping_success",
+        ],
+        "data" => [],
+
+    ];

@@ -17,6 +17,7 @@ class Timestamp {
 
         $allowed = [
             "/",
+            "/ping",
         ];
 
         if(env("API_CHECKING", true)) {
