@@ -1,6 +1,8 @@
 <?php
 
 use App\Exceptions\InvalidHashException;
+use App\Exceptions\InvalidKeyEncryptionException;
+use App\Models\AppKey;
 use App\Models\Hash;
 
 if ( ! function_exists('config_path'))
@@ -84,7 +86,8 @@ if ( ! function_exists('string_value_to_int'))
 if (!function_exists('validate_hash')) {
     function validate_hash($request)
     {
-        if(env("APP_HASH", true)){
+        // dd(env("API_HASH", true));
+        if(env("API_HASH", true)){
             if(strlen($request->header("x-hash")) > 0) {
                 $hash = Hash::where("hash_value", $request->header("x-hash"))->first();
                 if($hash != null) {
@@ -115,7 +118,7 @@ if (!function_exists('validate_hash')) {
                 throw new InvalidHashException("hash_not_provided");
             }
         } else {
-            return new RequestHash();
+            return new Hash();
         }
     }
 }
@@ -123,7 +126,7 @@ if (!function_exists('validate_hash')) {
 if (!function_exists('commit_hash')) {
     function commit_hash($request)
     {
-        if(env("APP_HASH", true)){
+        if(env("API_HASH", true)){
             $hash = validate_hash($request);
 
             $data = [
@@ -148,3 +151,48 @@ if (!function_exists('commit_hash')) {
         }
     }
 }
+
+if (!function_exists('enc_cbc')) {
+    function enc_cbc($string, $key)
+    {
+        if(env("API_ENCRYPT_DECRYPT", true)){
+            $keyOnDb = AppKey::where("app_key_value", $key)
+                                ->first();
+
+            if($keyOnDb != null) {
+                $_string = openssl_encrypt($string, 'aes-256-cbc', $keyOnDb->app_key_aes_cbc, 0, $keyOnDb->app_key_aes_cbc_iv);
+
+                return $_string;
+            } else {
+                throw new InvalidKeyEncryptionException("app_key_not_found_to_encrypted");
+            }
+        } else {
+            return $string;
+        }
+    }
+}
+
+if (!function_exists('dec_cbc')) {
+    function dec_cbc($string, $key)
+    {
+        if(env("API_ENCRYPT_DECRYPT", true)){
+            $keyOnDb = AppKey::where("app_key_value", $key)
+                                ->first();
+
+            if($keyOnDb != null) {
+                $_string = openssl_decrypt($string, 'aes-256-cbc', $keyOnDb->app_key_aes_cbc, 0, $keyOnDb->app_key_aes_cbc_iv);
+
+                if(!$_string) {
+                    throw new InvalidKeyEncryptionException("failed_on_decrypt");
+                }
+
+                return $_string;
+            } else {
+                throw new InvalidKeyEncryptionException("app_key_not_found_to_encrypted");
+            }
+        } else {
+            return $string;
+        }
+    }
+}
+

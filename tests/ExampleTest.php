@@ -3,8 +3,12 @@
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
+// use Illuminate\Foundation\Testing\RefreshDatabase;
+
 class ExampleTest extends TestCase
 {
+    // use RefreshDatabase;
+    
     /**
      * A basic test example.
      *
@@ -12,6 +16,7 @@ class ExampleTest extends TestCase
      */
     public function testExample()
     {
+        // $this->withoutExceptionHandling();
         $this->get('/');
 
         $this->assertEquals(
@@ -19,3 +24,4 @@ class ExampleTest extends TestCase
         );
     }
 }
+ 

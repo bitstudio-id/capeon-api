@@ -16,7 +16,7 @@ class Hash
      */
     public function handle($request, Closure $next)
     {
-        if(env("APP_HASH", true)){
+        if(env("API_HASH", true)){
             if(strlen($request->header("x-hash")) > 0){
                 $hash = validate_hash($request);
                 

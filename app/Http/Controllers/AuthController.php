@@ -41,7 +41,9 @@ class AuthController extends Controller {
     		throw new NotFoundException("user_not_found");
     	}
 
-    	if (password_verify($request->password, $get->password)) {
+        $password = dec_cbc($request->password, $request->header("x-app-key"));
+
+    	if (password_verify($password, $get->password)) {
     		$jwt = $this->jwt($get);
 
     		$token = new Token();
@@ -95,7 +97,10 @@ class AuthController extends Controller {
 
     			$user->nama = trim($request->nama);
     			$user->no_hp = trim($request->username);
-    			$user->password = Hash::make($request->password);
+
+                $_password = dec_cbc($request->password, $request->header("x-app-key"));
+
+    			$user->password = Hash::make($_password);
     			$user->save();
 
     			$register_token = new RegisterToken();
@@ -181,9 +186,6 @@ class AuthController extends Controller {
     				} else {
     					throw new BadRequestException("invalid_app_key");
     				}
-
-
-
     			} catch (\Exception $e) {
     				DB::rollback();
     				throw new BadRequestException($e->getMessage());
