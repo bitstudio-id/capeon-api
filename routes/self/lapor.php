@@ -18,9 +18,11 @@ $api->version('v1', [
 		], function($api){
 			$api->group([
 				'middleware' => [
-					"checksum"
+					"checksum",
+					"hash",
 				],
 			], function($api){
+
 				$api->post('', 'LaporController@store');
 			});
 			

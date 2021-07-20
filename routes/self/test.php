@@ -30,7 +30,7 @@ $api->version('v1', [
 			});
 			
 		});
-		$api->get('phpinfo', 'TestController@phpinfo');
+		// $api->get('phpinfo', 'TestController@phpinfo');
 		$api->get('assign-role', 'TestController@assignRole');
 		$api->get('encrypt-decrypt', 'TestController@encryptDecrypt');
 		$api->get('encrypt-decrypt-rsa', 'TestController@encryptDecryptRsa');

@@ -17,7 +17,6 @@ $api->version('v1', [
 			],
 		], function($api){
 			$api->get('', 'MediaController@index');
-			$api->get('all', 'MediaController@all');
 		});
 	});
 });
