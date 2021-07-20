@@ -160,6 +160,14 @@ if (!function_exists('enc_cbc')) {
                                 ->first();
 
             if($keyOnDb != null) {
+                if($keyOnDb->app_key_aes_cbc == null) {
+                    throw new InvalidKeyEncryptionException("no_app_key_aes_cbc");
+                }
+
+                if($keyOnDb->app_key_aes_cbc_iv == null) {
+                    throw new InvalidKeyEncryptionException("no_app_key_aes_cbc_iv");
+                }
+
                 $_string = openssl_encrypt($string, 'aes-256-cbc', $keyOnDb->app_key_aes_cbc, 0, $keyOnDb->app_key_aes_cbc_iv);
 
                 return $_string;
@@ -180,6 +188,15 @@ if (!function_exists('dec_cbc')) {
                                 ->first();
 
             if($keyOnDb != null) {
+
+                if($keyOnDb->app_key_aes_cbc == null) {
+                    throw new InvalidKeyEncryptionException("no_app_key_aes_cbc");
+                }
+
+                if($keyOnDb->app_key_aes_cbc_iv == null) {
+                    throw new InvalidKeyEncryptionException("no_app_key_aes_cbc_iv");
+                }
+
                 $_string = openssl_decrypt($string, 'aes-256-cbc', $keyOnDb->app_key_aes_cbc, 0, $keyOnDb->app_key_aes_cbc_iv);
 
                 if(!$_string) {
@@ -193,6 +210,27 @@ if (!function_exists('dec_cbc')) {
         } else {
             return $string;
         }
+    }
+}
+
+if (!function_exists('urlGenerator')) {
+    /**
+     * @return \Laravel\Lumen\Routing\UrlGenerator
+     */
+    function urlGenerator() {
+        return new \Laravel\Lumen\Routing\UrlGenerator(app());
+    }
+}
+
+if (!function_exists('asset')) {
+    /**
+     * @param $path
+     * @param bool $secured
+     *
+     * @return string
+     */
+    function asset($path, $secured = false) {
+        return urlGenerator()->asset($path, $secured);
     }
 }
 

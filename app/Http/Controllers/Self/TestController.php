@@ -110,12 +110,13 @@ class TestController extends Controller {
 
         // dd($iv2_enc, base64_decode($iv2_enc));
         // dd($iv2);
-
+        // dd(OPENSSL_ZERO_PADDING);
         // $encrypted_string=openssl_encrypt($string,"AES-256-ECB", $key, 0 , $iv);
         $encrypted_string=openssl_encrypt($string, 'aes-256-cbc', $key, 0, $iv);
-        $decrypted_string=openssl_decrypt($encrypted_string,"aes-256-cbc", $key, 0 , $iv);
-
-        dd($encrypted_string, $decrypted_string, $key, openssl_decrypt("HPrTERREW6z1vkwerv7d2w==", "aes-256-cbc", $key, 0, $iv));
+        // $decrypted_string=openssl_decrypt($encrypted_string,"aes-256-cbc", $key, 0 , $iv);
+        $decrypted_string=openssl_decrypt("WgRXW9EHzbGq7EkbC4kXBg==", "aes-256-cbc", $key, 0 , $iv);
+        dd($decrypted_string);
+        // dd($encrypted_string, $decrypted_string, $key, openssl_decrypt("HPrTERREW6z1vkwerv7d2w==", "aes-256-cbc", $key, 0, $iv));
     }
 
     public function encryptDecryptRsa()
