@@ -27,7 +27,6 @@ class LaporStoreRequest extends FormRequest
             ],
             'foto.*' => [
                 "required",
-                "min:6",
                 "image",
                 "mimes:jpg,png,jpeg,bmp,jfif"
             ],

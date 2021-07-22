@@ -14,28 +14,32 @@
 
 require __DIR__.'/auth.php';
 
-$routeFiles = scandir(__DIR__."/self");
+$route_v1 = scandir(__DIR__."/self/v1");
 
 $exclude = [
     ".",
     ".."
 ];
 
-// dd($dynamicRoute);
-foreach($routeFiles as $route) {
+// include route on v1
+foreach($route_v1 as $route) {
     if(!in_array($route, $exclude)) {
-        require __DIR__.'/self/'.$route;
+        require __DIR__.'/self/v1/'.$route;
     }
 }
 
 $router->get('', function () use ($router) {
     return [
     	"meta" => [
-    		"message" => "welcome to api capeon",
+    		"message" => "welcome to api ".env("APP_NAME", "app"),
     		"date" => date("d-m-Y"),
     		"time" => date("H:i:s"),
     	],
-    	"data" => [],
+    	"data" => [
+            "developed_by" => [
+                "@cacing69"
+            ]
+        ],
 
     ];
 });

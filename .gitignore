@@ -1,6 +1,8 @@
 /vendor
 /packages
-/public/images
+/public/files/
+/public/images/*
+!/public/images/placeholder.jpg
 /.idea
 Homestead.json
 Homestead.yaml

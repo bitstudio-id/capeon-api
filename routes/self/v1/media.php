@@ -16,6 +16,16 @@ $api->version('v1', [
 				"auth"
 			],
 		], function($api){
+			$api->group([
+				'middleware' => [
+					"checksum",
+					"hash",
+				],
+			], function($api){
+
+				$api->post('', 'MediaController@store');
+			});
+			
 			$api->get('', 'MediaController@index');
 		});
 	});

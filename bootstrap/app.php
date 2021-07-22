@@ -118,6 +118,7 @@ $app->register(Spatie\Activitylog\ActivitylogServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
 $app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(Cacing69\BITBuilder\BITBuilderServiceProvider::class);
+$app->register(App\Providers\RepositoryServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

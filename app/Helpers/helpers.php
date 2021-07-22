@@ -1,9 +1,12 @@
 <?php
 
+use App\Exceptions\BadRequestException;
 use App\Exceptions\InvalidHashException;
 use App\Exceptions\InvalidKeyEncryptionException;
 use App\Models\AppKey;
 use App\Models\Hash;
+use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 if ( ! function_exists('config_path'))
 {
@@ -231,6 +234,87 @@ if (!function_exists('asset')) {
      */
     function asset($path, $secured = false) {
         return urlGenerator()->asset($path, $secured);
+    }
+}
+
+if (!function_exists('store_image')) {
+    function store_image($data, $path = "", $options = ["thumbnail" => false, "max_size" => 1280]) {
+
+        if(!array_key_exists("tmp_name", $data)) {
+            throw new BadRequestException("ionvalid data, no tmp_name key");
+        }
+
+        if(!array_key_exists("thumbnail", $options)) {
+            $options["thumbnail"] = false;
+        }
+
+        if(!array_key_exists("max_size", $options)) {
+            $options["max_size"] = 1280;
+        }
+
+        $return = [];
+
+        $temp   = $data["tmp_name"];
+
+        $now    = date("Ymdhis");
+
+        $name   = $data['name'];
+        $size   = $data['size'];
+        $type   = $data['type'];
+
+        $explode_name   = explode('.', $name);
+        $extension      = $explode_name[count($explode_name) - 1];
+        
+        $file_name      = $now."-".Str::random(32).".".$extension;
+        
+        $dir = public_app_path("images");
+        
+        move_uploaded_file($temp, $dir."/".$file_name);
+            
+        $return["original"] = "images/".$file_name;
+        $return["thumb_square"] = null;
+        $return["thumb_landscape"] = null;
+        
+        // resize
+        $imgResize = Image::make(public_app_path($return["original"]));
+
+        if($imgResize->width() > $imgResize->height()) {
+            if($imgResize->width() > $options["max_size"]) {
+                $imgResize->resize($options["max_size"], null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+        }
+
+        if($imgResize->height() > $imgResize->width()) {
+            if($imgResize->height() > $options["max_size"]) {
+                $imgResize->resize(null, $options["max_size"], function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+        }
+        
+        $imgResize->save(public_app_path($return["original"]), 75);
+
+        // generate thumbnail
+        if($options["thumbnail"]) {
+            // thumbnail square
+            $thumbSquare = Image::make(public_app_path($return["original"]))->fit(500, 500);
+            
+            $return["thumb_square"] = '/images/thumbnail/square/' . $file_name;
+            
+            $thumbSquarePath = public_app_path($return["thumb_square"]);
+            $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath, 75);
+
+            // thumbnail landscape
+            $thumbLandscape = Image::make(public_app_path($return["original"]))->fit(500, 375);
+            $return["thumb_landscape"] = '/images/thumbnail/landscape/' . $file_name;
+            
+            $thumbLandscapePath = public_app_path($return["thumb_landscape"]);
+            $thumbLandscapeImage = Image::make($thumbLandscape)->save($thumbLandscapePath, 75);
+        }
+
+        return $return;
     }
 }
 

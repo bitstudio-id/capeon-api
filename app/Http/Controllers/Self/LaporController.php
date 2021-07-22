@@ -155,25 +155,24 @@ class LaporController extends Controller {
 
 			foreach ($_FILES['foto']["tmp_name"] as $key => $value) {
 
-
 				$temp   = $value;
+
 		        $name   = $_FILES['foto']['name'][$key];
 		        $size   = $_FILES['foto']['size'][$key];
 		        $type   = $_FILES['foto']['type'][$key];
 
 				$explode_name = explode('.', $name);
-		        
 		        $extension = $explode_name[count($explode_name) - 1];
 		        
 		        $file_name = $now."-".Str::random(32).".".$extension;
 
-		        $dir = public_app_path("images/lapor");
+		        $dir = public_app_path("images");
 		        move_uploaded_file($temp, $dir."/".$file_name);
 
 				// dd($temp, $dir."/".$file_name);
 				$lapor_foto = new LaporFoto();
 				$lapor_foto->lapor_foto_lapor_id = $lapor->lapor_id;
-				$lapor_foto->lapor_foto_original = "images/lapor/".$file_name;
+				$lapor_foto->lapor_foto_original = "images/".$file_name;
 				$lapor_foto->lapor_foto_nama_file = $value;
 				$lapor_foto->lapor_foto_created_at = $date;
 				$lapor_foto->lapor_foto_created_by = auth()->id();
@@ -203,20 +202,19 @@ class LaporController extends Controller {
 				// generate thumbnail
 				$thumbSquare = Image::make(public_app_path($lapor_foto->lapor_foto_original))->fit(500, 500);
 				
-				$lapor_foto->lapor_foto_square = '/images/lapor/thumbnail/square/' . $file_name;
+				$lapor_foto->lapor_foto_square = '/images/thumbnail/square/' . $file_name;
 			    
 			    $thumbSquarePath = public_app_path($lapor_foto->lapor_foto_square);
 			    $thumbSquareImage = Image::make($thumbSquare)->save($thumbSquarePath, 75);
 
 			    $thumbLandscape = Image::make(public_app_path($lapor_foto->lapor_foto_original))->fit(500, 375);
 				
-				$lapor_foto->lapor_foto_landscape = '/images/lapor/thumbnail/landscape/' . $file_name;
+				$lapor_foto->lapor_foto_landscape = '/images/thumbnail/landscape/' . $file_name;
 			    
 			    $thumbLandscapePath = public_app_path($lapor_foto->lapor_foto_landscape);
 			    $thumbLandscapeImage = Image::make($thumbLandscape)->save($thumbLandscapePath, 75);
 
 				$lapor_foto->save();
-				// dd(1);
 			}
 
 			commit_hash($request);
