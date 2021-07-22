@@ -225,6 +225,12 @@ if (!function_exists('urlGenerator')) {
     }
 }
 
+if (!function_exists('isset_file')) {
+    function isset_file($file) {
+        return (isset($file) && $file['error'] != UPLOAD_ERR_NO_FILE);
+    }
+}
+
 if (!function_exists('asset')) {
     /**
      * @param $path

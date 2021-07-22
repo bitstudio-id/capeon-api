@@ -52,13 +52,13 @@ class MediaController extends Controller {
 	{
 		$params = $request->all();
 
-		if($_FILES["logo"]["error"] != 0) {
+		if(@$_FILES["logo"]["tmp_name"] != "") {
+			// store and resize image
 			$image = store_image($_FILES["logo"]);
 			$params["logo"] = $image["original"];
 		} else {
 			$params["logo"] = "images/placeholder.jpg";
 		}
-		// store and resize image
 		
 		$params["created_by"] = auth()->id();
 
@@ -67,7 +67,7 @@ class MediaController extends Controller {
 		return $this->response
 					->item($data, new MediaTransformer, ["key" => "data"])
 					->setMeta([
-						"message" => "media_berhasil disimpan"
+						"message" => "media_berhasil_disimpan"
 					]);
 	}
 }
