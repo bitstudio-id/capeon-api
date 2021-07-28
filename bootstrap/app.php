@@ -118,7 +118,7 @@ $app->register(Spatie\Activitylog\ActivitylogServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
 $app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(Cacing69\BITBuilder\BITBuilderServiceProvider::class);
-$app->register(App\Providers\RepositoryServiceProvider::class);
+$app->register(Modules\Base\BaseServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -130,16 +130,37 @@ $app->register(App\Providers\RepositoryServiceProvider::class);
 |
 */
 
-$app->router->group([
-    'namespace' => 'App\Http\Controllers',
-], function ($router) {
-    require __DIR__.'/../routes/web.php';
-    // require __DIR__.'/../routes/auth.php';
-    // require __DIR__.'/../routes/self/bank.php';
-    // require __DIR__.'/../routes/self/lapor.php';
-    // require __DIR__.'/../routes/self/media.php';
-    // require __DIR__.'/../routes/self/test.php';
-    // require __DIR__.'/../routes/self/kredibel.php';
-});
+$routePattern = __DIR__.'/../modules/*/routes.php';
+
+$routes = glob($routePattern);
+
+foreach ($routes as $route) {
+    $explodeName = explode("/", $route);
+
+    $app->router->group([
+        'namespace' => 'Modules\\Http\\'.$explodeName[3],
+    ], function ($router) use ($route) {
+        require $route;
+    });
+}
+
+// dd($filenames);
+
+// $app->router->group([
+//     'namespace' => 'App\Http\Controllers',
+// ], function ($router) {
+//     // require __DIR__.'/../routes/web.php';
+
+    
+
+//     // dd(1);
+
+//     // require __DIR__.'/../routes/auth.php';
+//     // require __DIR__.'/../routes/self/bank.php';
+//     // require __DIR__.'/../routes/self/lapor.php';
+//     // require __DIR__.'/../routes/self/media.php';
+//     // require __DIR__.'/../routes/self/test.php';
+//     // require __DIR__.'/../routes/self/kredibel.php';
+// });
 
 return $app;

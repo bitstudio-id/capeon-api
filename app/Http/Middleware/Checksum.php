@@ -32,7 +32,7 @@ class Checksum {
                 }
             }
         }
-
+        
         return $next($request);
     }
 }

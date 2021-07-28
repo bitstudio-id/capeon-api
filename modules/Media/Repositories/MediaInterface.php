@@ -1,5 +1,5 @@
 <?php 
-namespace App\Repositories\Media;
+namespace Modules\Media\Repositories;
 
 interface MediaInterface {
 	public function create($params);

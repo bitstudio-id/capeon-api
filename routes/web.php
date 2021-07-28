@@ -13,20 +13,24 @@
 */
 
 require __DIR__.'/auth.php';
+// dd(1);
+// $route_v1 = scandir(__DIR__."/self/modules");
 
-$route_v1 = scandir(__DIR__."/self/v1");
+// $exclude = [
+//     ".",
+//     ".."
+// ];
 
-$exclude = [
-    ".",
-    ".."
-];
+// // include route on v1
+// foreach($route_v1 as $route) {
+//     if(!in_array($route, $exclude)) {
+//         require __DIR__.'/self/v1/'.$route;
+//     }
+// }
 
-// include route on v1
-foreach($route_v1 as $route) {
-    if(!in_array($route, $exclude)) {
-        require __DIR__.'/self/v1/'.$route;
-    }
-}
+// $path = 'src/*.php';
+
+// $filenames = glob($path);
 
 $router->get('', function () use ($router) {
     return [

@@ -1,9 +1,9 @@
 <?php 
-namespace App\Repositories\Media;	
+namespace Modules\Media\Repositories;	
 
-use App\Models\Self\Media;
-use App\Repositories\BaseRepository;
-use App\Repositories\Media\MediaInterface;
+use Modules\Base\BaseRepository;
+use Modules\Media\Media;
+use Modules\Media\Repositories\MediaInterface;
 
 class MediaRepository extends BaseRepository implements MediaInterface {
 

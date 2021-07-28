@@ -1,5 +1,5 @@
 <?php 
-namespace App\Http\Transformers\Self;
+namespace Modules\Media\Http;
 
 use League\Fractal\TransformerAbstract;
 
@@ -7,7 +7,6 @@ class MediaTransformer extends TransformerAbstract
 {
 	public function transform($data)
     {
-
     	$transform = [
             'id' => $data->media_id,
             'nama' => $data->media_nama,

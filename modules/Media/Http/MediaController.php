@@ -1,19 +1,18 @@
 <?php
-
-namespace App\Http\Controllers\Self;
+namespace Modules\Media\Http;
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\Self\MediaTransformer;
-use App\Models\Self\Media;
-use App\Repositories\Media\MediaInterface;
-use App\Repositories\Media\MediaStoreRequest;
 use Cacing69\BITBuilder\BITBuilder;
 use Cacing69\BITBuilder\Filterable;
 use Cacing69\BITBuilder\Sortable;
 use Illuminate\Http\Request;
+use Modules\Media\Media;
+use Modules\Media\Http\MediaStoreRequest;
+use Modules\Media\Http\MediaTransformer;
+use Modules\Media\Repositories\MediaInterface;
 
 class MediaController extends Controller {
-	private $media;
+	private $media; // repository
 
 	public function __construct(MediaInterface $media)
 	{
@@ -30,12 +29,8 @@ class MediaController extends Controller {
 						->addSorts([
 							Sortable::field('id', 'media_id'),
 						])
-						->defaultSort("media_id");
-
-
-		if($request->filled("last_id")) {
-			$get_data = $get_data->moveCursor("media_id", $request->last_id);
-		}
+						->defaultSort("media_id")
+						->setCursor("last_id");
 
 		$get_data = $get_data->get();
 
@@ -53,7 +48,6 @@ class MediaController extends Controller {
 		$params = $request->all();
 
 		if(@$_FILES["logo"]["tmp_name"] != "") {
-			// store and resize image
 			$image = store_image($_FILES["logo"]);
 			$params["logo"] = $image["original"];
 		} else {

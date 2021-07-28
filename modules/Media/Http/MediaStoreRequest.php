@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\Media;
+namespace Modules\Media\Http;
 
 use Dingo\Api\Http\FormRequest;
 use Illuminate\Support\Str;

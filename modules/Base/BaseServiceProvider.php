@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Providers;
+namespace Modules\Base;
 
-use App\Repositories\Media\MediaInterface;
-use App\Repositories\Media\MediaRepository;
 use Illuminate\Support\ServiceProvider;
+use Modules\Media\Repositories\MediaInterface;
+use Modules\Media\Repositories\MediaRepository;
 
-class RepositoryServiceProvider extends ServiceProvider
+class BaseServiceProvider extends ServiceProvider
 {
     public function register()
     {

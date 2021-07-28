@@ -1,5 +1,5 @@
 <?php 
-namespace App\Repositories;
+namespace Modules\Base;
 
 use App\Exceptions\NotFilledException;
 

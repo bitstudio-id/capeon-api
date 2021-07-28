@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\Self;
+namespace Modules\Media;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
