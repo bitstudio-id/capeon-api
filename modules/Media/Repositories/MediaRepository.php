@@ -1,7 +1,7 @@
 <?php 
 namespace Modules\Media\Repositories;	
 
-use Modules\Base\BaseRepository;
+use Base\BaseRepository;
 use Modules\Media\Media;
 use Modules\Media\Repositories\MediaInterface;
 

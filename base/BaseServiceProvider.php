@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Base;
+namespace Base;
 
 use Illuminate\Support\ServiceProvider;
 use Modules\Media\Repositories\MediaInterface;
