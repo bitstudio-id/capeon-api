@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",
-        "cacing69/bitbuilder": "dev-master",
+        "cacing69/bitbuilder": "^0.3",
         "dingo/api": "^3.0.0",
         "fabpot/goutte": "^4.0",
         "firebase/php-jwt": "^5.2",
@@ -16,7 +16,8 @@
         "nordsoftware/lumen-cors": "^3.4",
         "php-amqplib/php-amqplib": "^3.0",
         "spatie/laravel-activitylog": "^3.17",
-        "spatie/laravel-permission": "^4.0"
+        "spatie/laravel-permission": "^4.0",
+        "zircote/swagger-php": "^3.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

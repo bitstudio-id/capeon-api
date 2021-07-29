@@ -19,6 +19,13 @@ class MediaController extends Controller {
 		$this->media = $media;
 	}
 
+	/**
+	 * @OA\Get(
+	 *     path="/media",
+	 *     description="get all media",
+	 *     @OA\Response(response="default", description="lorem ipsum")
+	 * )
+	 */
 	public function index(Request $request)
 	{
 		$get_data = BITBuilder::on(Media::class)

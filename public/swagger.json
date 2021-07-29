@@ -1,0 +1,31 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger UI",
+        "version": "0.1"
+    },
+    "paths": {
+        "/hash": {
+            "get": {
+                "description": "generate token hash",
+                "operationId": "3eaac7e8dd544e6a82dd46534f151ac4",
+                "responses": {
+                    "default": {
+                        "description": "lorem ipsum"
+                    }
+                }
+            }
+        },
+        "/media": {
+            "get": {
+                "description": "get all media",
+                "operationId": "0dda808f8813664bbdf6944398f96885",
+                "responses": {
+                    "default": {
+                        "description": "lorem ipsum"
+                    }
+                }
+            }
+        }
+    }
+}

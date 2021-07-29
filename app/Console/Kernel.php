@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\ModuleMakeCommand;
+use App\Console\Commands\SwaggerScanCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         ModuleMakeCommand::class,
+        SwaggerScanCommand::class,
     ];
 
     /**

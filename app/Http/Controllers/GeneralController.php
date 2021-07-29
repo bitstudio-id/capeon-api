@@ -7,6 +7,13 @@ use App\Models\Hash;
 use Illuminate\Support\Str;
 
 class GeneralController extends Controller {
+	/**
+	 * @OA\Get(
+	 *     path="/hash",
+	 *     description="generate token hash",
+	 *     @OA\Response(response="default", description="lorem ipsum")
+	 * )
+	 */
 	public function hash(HashRequest $request)
 	{
 		$hash = new Hash();
