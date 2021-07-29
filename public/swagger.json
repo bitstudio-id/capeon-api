@@ -18,14 +18,102 @@
         },
         "/media": {
             "get": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Finds Pets by status",
                 "description": "get all media",
-                "operationId": "0dda808f8813664bbdf6944398f96885",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status values that needed to be considered for filter",
+                        "required": true,
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "available",
+                                    "pending",
+                                    "sold"
+                                ]
+                            },
+                            "default": "available"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": "lorem ipsum"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Add a new Media",
+                "operationId": "store",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/Media"
+                },
+                "responses": {
+                    "422": {
+                        "description": "Invalid input"
+                    }
+                }
             }
         }
-    }
+    },
+    "components": {
+        "schemas": {
+            "Media": {
+                "title": "Media",
+                "description": "Media",
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nama": {
+                        "title": "Media nama",
+                        "description": "Media nama",
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Media"
+                }
+            }
+        },
+        "requestBodies": {
+            "Media": {
+                "description": "Media object that needs to be added",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Media",
+            "description": "Everything about Media",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "http://swagger.io"
+            }
+        }
+    ]
 }

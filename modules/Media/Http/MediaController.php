@@ -11,7 +11,7 @@ use Modules\Media\Http\MediaStoreRequest;
 use Modules\Media\Http\MediaTransformer;
 use Modules\Media\Repositories\MediaInterface;
 
-class MediaController extends Controller {
+class MediaController extends Controller implements MediaC{
 	private $media; // repository
 
 	public function __construct(MediaInterface $media)
@@ -19,13 +19,6 @@ class MediaController extends Controller {
 		$this->media = $media;
 	}
 
-	/**
-	 * @OA\Get(
-	 *     path="/media",
-	 *     description="get all media",
-	 *     @OA\Response(response="default", description="lorem ipsum")
-	 * )
-	 */
 	public function index(Request $request)
 	{
 		$get_data = BITBuilder::on(Media::class)

@@ -1,4 +1,14 @@
 <?php
+/**
+ * @OA\Tag(
+ *     name="Media",
+ *     description="Everything about Media",
+ *     @OA\ExternalDocumentation(
+ *         description="Find out more",
+ *         url="http://swagger.io"
+ *     )
+ * )
+ */
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
